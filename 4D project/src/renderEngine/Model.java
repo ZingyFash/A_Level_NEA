@@ -1,26 +1,24 @@
 package renderEngine;
 
-import java.util.List;
-
 public class Model {
 
     private final String id;
-    private List<Mesh> meshList;
+    private Mesh mesh;
 
-    public Model(String id, List<Mesh> meshList) {
+    public Model(String id, Mesh mesh) {
         this.id = id;
-        this.meshList = meshList;
+        this.mesh = mesh;
     }
 
     public void cleanup() {
-        meshList.forEach(Mesh::cleanup);
+        mesh.cleanup();
     }
 
     public String getId() {
         return id;
     }
 
-    public List<Mesh> getMeshList() {
-        return meshList;
+    public Mesh getMesh() {
+        return mesh;
     }
 }

@@ -38,10 +38,9 @@ public class Renderer {
         for (Entity e : scene.getEntities()) {
             uniformsMap.setUniform4x4f("modelMatrix", e.getModelMatrix());
             Model model = scene.getModelMap().get(e.getModelId());
-            model.getMeshList().forEach(m -> {
-                glBindVertexArray(m.getVaoId());
-                glDrawElements(GL_TRIANGLES, m.getNumVertices(), GL_UNSIGNED_INT, 0);
-            });
+            Mesh mesh = model.getMesh();
+            glBindVertexArray(mesh.getVaoId());
+            glDrawElements(GL_TRIANGLES, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
         }
 
         glBindVertexArray(0);
