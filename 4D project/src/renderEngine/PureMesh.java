@@ -63,10 +63,21 @@ public class PureMesh {
         List<Float> vertices = new ArrayList<>();
         List<Float> newColours = new ArrayList<>();
         for (int i = 0; i < indices.length; i++) {
-            float[] vertexA = {positions[indices[i]], positions[indices[i] + 1], positions[indices[i] + 2]};
-            float[] colourA = {colours[indices[i]], colours[indices[i] + 1], colours[indices[i] + 2]};
-            float[] vertexB = {positions[indices[i+1]], positions[indices[i+1] + 1], positions[indices[i+1] + 2]};
-            float[] colourB = {colours[indices[i+1]], colours[indices[i+1] + 1], colours[indices[i+1] + 2]};
+            float[] vertexA;
+            float[] colourA;
+            float[] vertexB;
+            float[] colourB;
+            if (i % 3 == 2) {
+                vertexA = new float[]{positions[indices[i] * 3], positions[indices[i] * 3 + 1], positions[indices[i] * 3 + 2]};
+                colourA = new float[]{colours[indices[i] * 3], colours[indices[i] * 3 + 1], colours[indices[i] * 3 + 2]};
+                vertexB = new float[]{positions[indices[i - 2] * 3], positions[indices[i - 2] * 3 + 1], positions[indices[i - 2] * 3 + 2]};
+                colourB = new float[]{colours[indices[i - 2] * 3], colours[indices[i - 2] * 3 + 1], colours[indices[i - 2] * 3 + 2]};
+            } else {
+                vertexA = new float[]{positions[indices[i] * 3], positions[indices[i] * 3 + 1], positions[indices[i] * 3 + 2]};
+                colourA = new float[]{colours[indices[i] * 3], colours[indices[i] * 3 + 1], colours[indices[i] * 3 + 2]};
+                vertexB = new float[]{positions[indices[i + 1] * 3], positions[indices[i + 1] * 3 + 1], positions[indices[i + 1] * 3 + 2]};
+                colourB = new float[]{colours[indices[i + 1] * 3], colours[indices[i + 1] * 3 + 1], colours[indices[i + 1] * 3 + 2]};
+            }
             if (Math.min(Math.min(vertexA[2], vertexB[2]), planeZ) == planeZ ||
                     Math.max(Math.max(vertexA[2], vertexB[2]), planeZ) == planeZ) {
                 continue;

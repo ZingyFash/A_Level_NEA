@@ -4,16 +4,14 @@ import org.joml.Math;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Main {
 
-    private Entity[] entities = new Entity[15];
-    private Vector4f velocity = new Vector4f();
+    private final Entity[] entities = new Entity[15];
+    private final Vector4f velocity = new Vector4f();
     private float rotation;
 
     public static void main(String[] args) {
@@ -22,24 +20,16 @@ public class Main {
         engine.start();
     }
 
-    public void init(Window window, Scene scene, Renderer render) {
+    public void init(Window window, Scene scene, RendererPure3D render) {
         // define the positions of the vertices of the cube
         float[] positions = new float[]{
-                // VO
                 -0.5f, 0.5f, 0.5f,
-                // V1
                 -0.5f, -0.5f, 0.5f,
-                // V2
                 0.5f, -0.5f, 0.5f,
-                // V3
                 0.5f, 0.5f, 0.5f,
-                // V4
                 -0.5f, 0.5f, -0.5f,
-                // V5
                 0.5f, 0.5f, -0.5f,
-                // V6
                 -0.5f, -0.5f, -0.5f,
-                // V7
                 0.5f, -0.5f, -0.5f,
         };
         float[] colors = new float[24];

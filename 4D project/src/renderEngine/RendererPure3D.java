@@ -6,17 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
 
-public class Renderer {
+public class RendererPure3D {
     private ShaderProgram shaderProgram;
     private UniformMap uniformsMap;
-    public Renderer() {
+    public RendererPure3D() {
         GL.createCapabilities();
         glEnable(GL_DEPTH_TEST);
 
         List<ShaderProgram.ShaderModuleData> shaderModuleDataList = new ArrayList<>();
-        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("4D project/resources/shaders/scene.vert", GL_VERTEX_SHADER));
-        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("4D project/resources/shaders/scene.frag", GL_FRAGMENT_SHADER));
+        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("4D project/resources/shaders/Pure3D.vert", GL_VERTEX_SHADER));
+        shaderModuleDataList.add(new ShaderProgram.ShaderModuleData("4D project/resources/shaders/Pure3D.frag", GL_FRAGMENT_SHADER));
 
         shaderProgram = new ShaderProgram(shaderModuleDataList);
 

@@ -5,7 +5,7 @@ public class Engine {
     public static final int TARGET_UPS = 30;
     private final Main main;
     private final Window window;
-    private Renderer render;
+    private RendererPure3D render;
     private boolean running;
     private Scene scene;
     private int targetFps;
@@ -20,7 +20,7 @@ public class Engine {
         targetFps = opts.fps;
         targetUps = opts.ups;
         this.main = main;
-        render = new Renderer();
+        render = new RendererPure3D();
         main.init(window, scene, render);
         running = true;
     }
