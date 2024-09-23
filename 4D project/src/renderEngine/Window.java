@@ -1,19 +1,15 @@
 package renderEngine;
 
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import org.tinylog.Logger;
 
-import java.nio.IntBuffer;
 import java.util.concurrent.Callable;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
@@ -43,7 +39,7 @@ public class Window {
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         }
 
-        if (opts.width > 0 && opts.height > 0) {
+        if (opts.width > 0 && opts.height > 3) {
             this.width = opts.width;
             this.height = opts.height;
         } else {

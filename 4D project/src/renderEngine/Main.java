@@ -10,17 +10,18 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Main {
 
-    private final Entity[] entities = new Entity[15];
+    private final Entity[] entities = new Entity[100];
     private final Vector4f velocity = new Vector4f();
     private float rotation;
 
     public static void main(String[] args) {
         Main main = new Main();
+        // initialise and run the graphics engine
         Engine engine = new Engine("4D", new Window.WindowOptions(), main);
         engine.start();
     }
 
-    public void init(Window window, Scene scene, RendererPure3D render) {
+    public void init(Window window, Scene scene, Renderer2DSlice render) {
         // define the positions of the vertices of the cube
         float[] positions = new float[]{
                 -0.5f, 0.5f, 0.5f,
@@ -32,12 +33,23 @@ public class Main {
                 -0.5f, -0.5f, -0.5f,
                 0.5f, -0.5f, -0.5f,
         };
-        float[] colors = new float[24];
+//        float[] colours = new float[24];
+//
+//        // randomly generate the colours of the vertices
+//        for (int i = 0; i < 24; i++) {
+//            colours[i] = Math.abs(new Random().nextFloat());
+//        }
 
-        // randomly generate the colours of the vertices
-        for (int i = 0; i < 24; i++) {
-            colors[i] = Math.abs(new Random().nextFloat());
-        }
+        float[] colours = {
+                0.0f, 1.0f, 1.0f,
+                0.0f, 1.0f, 1.0f,
+                1.0f, 0.0f, 1.0f,
+                1.0f, 1.0f, 1.0f,
+                0.0f, 1.0f, 0.0f,
+                1.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f,
+                1.0f, 0.0f, 0.0f
+        };
 
         // define the order in which to draw the vertices
         int[] indices = new int[]{
@@ -56,7 +68,7 @@ public class Main {
         };
 
         // create mesh, model and entity
-        Mesh mesh = new Mesh(positions, colors, indices);
+        Mesh mesh = new Mesh(positions, colours, indices);
         String cubeModelId = "cube-model";
         Model model = new Model(cubeModelId, mesh);
         scene.addModel(model);
@@ -70,12 +82,13 @@ public class Main {
     }
 
     public void update(Window window, Scene scene, long diffTimeMillis) {
-        rotation += .06f + 0.05f * Math.sin(rotation);
+        rotation += .01f;
         if (rotation > 2*Math.PI) {
             rotation = 0;
         }
         for (int i = 0; i < entities.length; i++) {
             entities[i].setRotation(Math.sin(rotation), Math.cos(rotation), 0, rotation);
+            entities[i].setPosition((i%10-5)*1.5f+Math.sin(rotation), (i/10 - 5) * 1.5f+Math.cos(rotation), -5+Math.sin(rotation)+Math.cos(rotation));
             entities[i].setScale(Math.cos(rotation));
             entities[i].updateModelMatrix();
         }

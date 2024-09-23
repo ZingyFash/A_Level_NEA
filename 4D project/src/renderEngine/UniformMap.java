@@ -1,6 +1,7 @@
 package renderEngine;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 import java.util.HashMap;
@@ -37,6 +38,16 @@ public class UniformMap {
                 throw new RuntimeException("Could not find uniform [" + uniformName + "].");
             }
             glUniformMatrix4fv(location.intValue(), false, value.get(stack.mallocFloat(16)));
+        }
+    }
+
+    public void setUniform3f(String uniformName, Vector3f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            Integer location = uniforms.get(uniformName);
+            if (location == null) {
+                throw new RuntimeException("Could not find uniform [" + uniformName + "].");
+            }
+            glUniform3fv(location.intValue(), value.get(stack.mallocFloat(3)));
         }
     }
 }
