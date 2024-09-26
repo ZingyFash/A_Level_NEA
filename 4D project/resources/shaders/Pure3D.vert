@@ -10,6 +10,6 @@ uniform mat4 modelMatrix;
 
 void main()
 {
-    gl_Position = projectionMatrix * modelMatrix * vec4(inPosition, 1.0);
+    gl_Position = projectionMatrix * (modelMatrix * vec4(inPosition, 1.0)+vec4(2,0,-5,0));
     outColour = inColour;
 }

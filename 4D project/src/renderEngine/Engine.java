@@ -1,5 +1,8 @@
 package renderEngine;
 
+/**
+ * The class that defines the logic for rendering a scene and handling updates and inputs
+ */
 public class Engine {
 
     public static final int TARGET_UPS = 30;
@@ -34,6 +37,9 @@ public class Engine {
         running = false;
     }
 
+    /**
+     * Periodically calls the update function in Main and render function in the desired renderer class
+     */
     private void run() {
         long initialTime = System.currentTimeMillis();
         float timeU = 1000.0f / targetUps;

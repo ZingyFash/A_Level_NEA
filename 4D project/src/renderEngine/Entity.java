@@ -4,6 +4,9 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+/**
+ * Each object in the scene is referenced as an Entity
+ */
 public class Entity {
 
     private final String modelId;
@@ -20,9 +23,17 @@ public class Entity {
         scale = 1;
     }
 
+    /**
+     * @return String - modelId - The reference to the model in the scenes modelMap
+     */
     public String getModelId() {
         return modelId;
     }
+
+    /**
+     * @return Matrix4f - modelMatrix - The matrix encoding the position, rotation, and scale of the object.
+     * This describes how to transform the vertices of the model
+     */
     public Matrix4f getModelMatrix() {
         return modelMatrix;
     }

@@ -18,12 +18,16 @@ public class Mesh {
     private int numVertices;
     private float[] positions;
     private float[] colours;
+    private int[] indices;
+    private boolean[][] adjacencyMatrix;
     private int vaoId;
     private List<Integer> vboIdList;
 
-    public Mesh(float[] positions, float[] colours, int[] indices) {
+    public Mesh(float[] positions, float[] colours, int[] indices, boolean[][] adjacencyMatrix) {
         this.positions = positions;
         this.colours = colours;
+        this.indices = indices;
+        this.adjacencyMatrix = adjacencyMatrix;
         try (MemoryStack stack = MemoryStack.stackPush()) {
             this.numVertices = indices.length;
             vboIdList = new ArrayList<>();
@@ -88,17 +92,27 @@ public class Mesh {
     public Mesh slice2D(float planeZ) {
         ArrayList<Float> positionsList = new ArrayList<>();
         ArrayList<Float> coloursList = new ArrayList<>();
-        for (int i = 0; i < positions.length; i+=3) {
-            Vector3f vertexA = new Vector3f(positions[i], positions[i+1], positions[i+2]);
-            Vector3f colourA = new Vector3f(colours[i], colours[i+1], colours[i+2]);
+        boolean[][] am = new boolean[adjacencyMatrix.length][adjacencyMatrix.length];
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            for (int j = 0; j < adjacencyMatrix.length; j++) {
+                am[i][j] = adjacencyMatrix[i][j];
+            }
+        }
+        for (int i = 0; i < indices.length; i++) {
+            if (!adjacencyMatrix[indices[i]][indices[(i%3==2)?i-2:i+1]]) {
+                continue;
+            }
+            adjacencyMatrix[indices[i]][indices[(i%3==2)?i-2:i+1]] = false;
+            Vector3f vertexA = new Vector3f(positions[indices[i]*3], positions[indices[i]*3+1], positions[indices[i]*3+2]);
+            Vector3f colourA = new Vector3f(colours[indices[i]*3], colours[indices[i]*3+1], colours[indices[i]*3+2]);
             Vector3f vertexB;
             Vector3f colourB;
-            if (i%9 != 6) {
-                vertexB = new Vector3f(positions[i+3], positions[i+4], positions[i+5]);
-                colourB = new Vector3f(colours[i+3], colours[i+4], colours[i+5]);
+            if (i%3 != 2) {
+                vertexB = new Vector3f(positions[indices[i+1]*3], positions[indices[i+1]*3+1], positions[indices[i+1]*3+2]);
+                colourB = new Vector3f(colours[indices[i+1]*3], colours[indices[i+1]*3+1], colours[indices[i+1]*3+2]);
             } else {
-                vertexB = new Vector3f(positions[i-6], positions[i-5], positions[i-4]);
-                colourB = new Vector3f(colours[i-6], colours[i-5], colours[i-4]);
+                vertexB = new Vector3f(positions[indices[i-2]*3], positions[indices[i-2]*3+1], positions[indices[i-2]*3+2]);
+                colourB = new Vector3f(colours[indices[i-2]*3], colours[indices[i-2]*3+1], colours[indices[i-2]*3+2]);
             }
             if (Math.min(Math.min(vertexA.z(), vertexB.z()), planeZ) == planeZ ||
             Math.max(Math.max(vertexA.z(), vertexB.z()), planeZ) == planeZ) {
@@ -107,11 +121,12 @@ public class Mesh {
             float t = (planeZ-vertexA.z())/(vertexB.z()-vertexA.z());
             positionsList.add((1-t) * vertexA.x() + t * vertexB.x());
             positionsList.add((1-t) * vertexA.y() + t * vertexB.y());
-            positionsList.add(planeZ);
+            positionsList.add(0.0f);
             coloursList.add((1-t) * colourA.x() + t * colourB.x());
             coloursList.add((1-t) * colourA.y() + t * colourB.y());
             coloursList.add((1-t) * colourA.z() + t * colourB.z());
         }
+        adjacencyMatrix = am;
 
         float[] positions = new float[positionsList.size()];
         float[] colours = new float[coloursList.size()];
@@ -133,25 +148,38 @@ public class Mesh {
         List<Double> angles = new ArrayList<>();
 
         for (int i = 0; i < positions.length; i+=3) {
-            angles.add(Math.atan2(positions[i+1]-centre[1], positions[i]-centre[0]));
+            double angle = Math.atan2(positions[i+1]-centre[1], positions[i]-centre[0]);
+            angles.add((angle<0)?2*Math.PI+angle:angle);
         }
 
-        int[] indices = new int[positions.length/2];
+        int[] orderedPositions = new int[positions.length/3];
 
         for (int i = 0; i < angles.size(); i++) {
             int index = -1;
             double minAngle = 7;
             for (int j = 0; j < angles.size(); j++) {
-                if (angles.get(j) < minAngle) {
+                if (Math.abs(angles.get(j)) < Math.abs(minAngle)) {
                     index = j;
                     minAngle = angles.get(j);
                 }
             }
             angles.remove(index);
             angles.add(index, 10.0);
-            indices[i] = index;
+            orderedPositions[i] = index;
         }
 
-        return new Mesh(positions, colours, indices);
+        ArrayList<Integer> indicesList = new ArrayList<>();
+        for (int i = 1; i < orderedPositions.length-1; i++) {
+            indicesList.add(orderedPositions[0]);
+            indicesList.add(orderedPositions[i]);
+            indicesList.add(orderedPositions[i+1]);
+        }
+
+        int[] indices = new int[indicesList.size()];
+        for (int i = 0; i < indicesList.size(); i++) {
+            indices[i] = indicesList.get(i);
+        }
+
+        return new Mesh(positions, colours, indices, null);
     }
 }

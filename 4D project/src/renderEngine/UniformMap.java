@@ -50,4 +50,12 @@ public class UniformMap {
             glUniform3fv(location.intValue(), value.get(stack.mallocFloat(3)));
         }
     }
+
+    public void setUniform1f(String uniformName, float value) {
+        Integer location = uniforms.get(uniformName);
+        if (location == null) {
+            throw new RuntimeException("Could not find uniform [" + uniformName + "].");
+        }
+        glUniform1f(location.intValue(), value);
+    }
 }
