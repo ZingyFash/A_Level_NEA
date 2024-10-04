@@ -48,7 +48,6 @@ public class Engine {
         float deltaR = 0;
 
         long updateTime = initialTime;
-
         while (running && !window.windowShouldClose()) {
             window.pollEvents();
 

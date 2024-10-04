@@ -94,9 +94,7 @@ public class Mesh {
         ArrayList<Float> coloursList = new ArrayList<>();
         boolean[][] am = new boolean[adjacencyMatrix.length][adjacencyMatrix.length];
         for (int i = 0; i < adjacencyMatrix.length; i++) {
-            for (int j = 0; j < adjacencyMatrix.length; j++) {
-                am[i][j] = adjacencyMatrix[i][j];
-            }
+            System.arraycopy(adjacencyMatrix[i], 0, am[i], 0, adjacencyMatrix.length);
         }
         for (int i = 0; i < indices.length; i++) {
             if (!adjacencyMatrix[indices[i]][indices[(i%3==2)?i-2:i+1]]) {

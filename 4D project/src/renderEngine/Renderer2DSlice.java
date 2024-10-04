@@ -1,7 +1,5 @@
 package renderEngine;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
 
 import java.util.ArrayList;
@@ -11,13 +9,12 @@ import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
 
 public class Renderer2DSlice {
-    private UniformMap uniformsMap;
-    private UniformMap uniformsMap1;
-    ShaderProgram shader;
-    ShaderProgram shaderProgram;
+    private UniformMap uniformsMap2D;
+    private UniformMap uniformsMap3D;
+    ShaderProgram shaderProgram2D;
+    ShaderProgram shaderProgram3D;
 
     public Renderer2DSlice() {
         GL.createCapabilities();
@@ -30,63 +27,50 @@ public class Renderer2DSlice {
         shaderModuleDataList1.add(new ShaderProgram.ShaderModuleData("4D project\\resources\\shaders\\Pure3D.vert", GL_VERTEX_SHADER));
         shaderModuleDataList1.add(new ShaderProgram.ShaderModuleData("4D project\\resources\\shaders\\Pure3D.frag", GL_FRAGMENT_SHADER));
 
-        shader = new ShaderProgram(shaderModuleDataList);
-        shaderProgram = new ShaderProgram(shaderModuleDataList1);
-        uniformsMap = new UniformMap(shader.getProgramId());
-        uniformsMap1 = new UniformMap(shaderProgram.getProgramId());
+        shaderProgram2D = new ShaderProgram(shaderModuleDataList);
+        shaderProgram3D = new ShaderProgram(shaderModuleDataList1);
+        uniformsMap2D = new UniformMap(shaderProgram2D.getProgramId());
+        uniformsMap3D = new UniformMap(shaderProgram3D.getProgramId());
         createUniforms();
     }
 
     public void cleanup() {
-        shader.cleanup();
+        shaderProgram2D.cleanup();
     }
 
     public void render(Window window, Scene scene) {
+        glClearColor(1,1,1,1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glViewport(0,0,window.getWidth(), window.getHeight());
 
-        shader.bind();
+        for (Entity entity : scene.getEntities()) {
+            // The 2D cross-section
+            shaderProgram2D.bind();
+            uniformsMap2D.setUniform1f("aspectRatio", ((float) window.getWidth()) /window.getHeight());
+            Mesh mesh = scene.getModelMap().get(entity.getModelId()).getMesh();
+            mesh.transformVertices(entity.getModelMatrix());
+            Mesh mesh2D = mesh.slice2D(Main.planeZ);
+            mesh.transformVertices(entity.getModelMatrix().invert());
+            glBindVertexArray(mesh2D.getVaoId());
+            glDrawElements(GL_TRIANGLES, mesh2D.getNumVertices(), GL_UNSIGNED_INT, 0);
+            shaderProgram2D.unbind();
 
-        uniformsMap.setUniform1f("aspectRatio", ((float) window.getWidth()) /window.getHeight());
-
-        Entity entity = scene.getEntities().get(0);
-        scene.getModelMap().get(entity.getModelId()).getMesh().transformVertices(entity.getModelMatrix());
-        Mesh mesh2D = scene.getModelMap().get(entity.getModelId()).getMesh().slice2D(Main.planeZ);
-        scene.getModelMap().get(entity.getModelId()).getMesh().transformVertices(entity.getModelMatrix().invert());
-        glBindVertexArray(mesh2D.getVaoId());
-        glDrawElements(GL_TRIANGLES, mesh2D.getNumVertices(), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-
-        shader.unbind();
-
-        shaderProgram.bind();
-
-        uniformsMap1.setUniform4x4f("projectionMatrix", scene.getProjection().getProjectionMatrix());
-
-        entity = scene.getEntities().get(1);
-        glBindVertexArray(scene.getModelMap().get(entity.getModelId()).getMesh().getVaoId());
-        glDrawElements(GL_TRIANGLES, scene.getModelMap().get(entity.getModelId()).getMesh().getNumVertices(), GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-        Entity e = scene.getEntities().get(0);
-
-        uniformsMap1.setUniform4x4f("modelMatrix", e.getModelMatrix());
-        Model model = scene.getModelMap().get(e.getModelId());
-        Mesh mesh = model.getMesh();
-        glBindVertexArray(mesh.getVaoId());
-        glDrawElements(GL_TRIANGLES, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
-
-        glBindVertexArray(0);
-        Matrix4f I = new Matrix4f(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
-        uniformsMap1.setUniform4x4f("modelMatrix", I);
-
-        shaderProgram.unbind();
+            // The 3D entity
+            shaderProgram3D.bind();
+            uniformsMap3D.setUniform4x4f("projectionMatrix", scene.getProjection().getProjectionMatrix());
+            uniformsMap3D.setUniform4x4f("modelMatrix", entity.getModelMatrix());
+            glBindVertexArray(scene.getModelMap().get(entity.getModelId()).getMesh().getVaoId());
+            glDrawElements(GL_TRIANGLES, scene.getModelMap().get(entity.getModelId()).getMesh().getNumVertices(), GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
+            shaderProgram3D.unbind();
+        }
     }
 
     private void createUniforms() {
-        uniformsMap = new UniformMap(shader.getProgramId());
-        uniformsMap.createUniform("aspectRatio");
-        uniformsMap1 = new UniformMap(shaderProgram.getProgramId());
-        uniformsMap1.createUniform("projectionMatrix");
-        uniformsMap1.createUniform("modelMatrix");
+        uniformsMap2D = new UniformMap(shaderProgram2D.getProgramId());
+        uniformsMap2D.createUniform("aspectRatio");
+        uniformsMap3D = new UniformMap(shaderProgram3D.getProgramId());
+        uniformsMap3D.createUniform("projectionMatrix");
+        uniformsMap3D.createUniform("modelMatrix");
     }
 }

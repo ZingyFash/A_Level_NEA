@@ -14,8 +14,8 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Main {
 
     public static float planeZ;
-    private final Entity[] entities = new Entity[100];
     private Entity entity;
+    private Entity plane;
     private final Vector4f velocity = new Vector4f();
     private float rotation;
     private boolean paused = false;
@@ -27,7 +27,7 @@ public class Main {
     public static void main(String[] args) {
         Main main = new Main();
         Window.WindowOptions windowOptions = new Window.WindowOptions();
-        windowOptions.fps = 30;
+        windowOptions.fps = 60;
         // initialise and run the graphics engine
         Engine engine = new Engine("4D", windowOptions, main);
         engine.start();
@@ -105,7 +105,7 @@ public class Main {
         String cubeModelId = "cube-model";
         Model model = new Model(cubeModelId, mesh);
         scene.addModel(model);
-        Mesh quadMesh = new Mesh(quadPositions, quadColours, quadIndices, null);
+        Mesh quadMesh = new Mesh(quadPositions, quadColours, quadIndices, new boolean[][]{{false,true,false,true},{true,false,true,false},{false,true,false,true},{true,false,true,false}});
         String quadModelId = "quad";
         Model quad = new Model(quadModelId, quadMesh);
         scene.addModel(quad);
@@ -119,10 +119,10 @@ public class Main {
         entity.setPosition(0,0,0);
         entity.updateModelMatrix();
         scene.addEntity(entity);
-        Entity quadEntity = new Entity(quadModelId);
-        quadEntity.setPosition(0,0,-5);
-        quadEntity.updateModelMatrix();
-        scene.addEntity(quadEntity);
+        plane = new Entity(quadModelId);
+        plane.setPosition(0,0,0);
+        plane.updateModelMatrix();
+        scene.addEntity(plane);
     }
 
     /**
@@ -148,7 +148,7 @@ public class Main {
     }
 
     /**
-     *
+     * Called once every frame. Handles user input
      * @param window the window that holds the scene
      * @param scene the scene that holds the entities
      * @param diffTimeMillis The time since the last update
@@ -178,7 +178,9 @@ public class Main {
         Vector3f entityPos = entity.getPosition();
         entity.setPosition(velocity.x + entityPos.x, velocity.y + entityPos.y, entityPos.z);
         planeZ+=velocity.z;
+        plane.setPosition(plane.getPosition().add(new Vector3f(0,0,velocity.z)));
         entity.updateModelMatrix();
+        plane.updateModelMatrix();
     }
 
     public void cleanup() {

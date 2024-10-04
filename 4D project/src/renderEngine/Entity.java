@@ -52,7 +52,11 @@ public class Entity {
         position.y = y;
         position.z = z;
     }
-
+    public final void setPosition(Vector3f v) {
+        position.x = v.x();
+        position.y = v.y();
+        position.z = v.z();
+    }
     public void setRotation(float x, float y, float z, float angle) {
         rotation.fromAxisAngleRad(x,y,z,angle);
     }
