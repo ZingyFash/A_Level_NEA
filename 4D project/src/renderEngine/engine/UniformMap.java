@@ -1,4 +1,4 @@
-package renderEngine;
+package renderEngine.engine;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -15,7 +15,7 @@ public class UniformMap {
 
     private Map<String, Integer> uniforms;
 
-    UniformMap(int programId) {
+    public UniformMap(int programId) {
         this.programId = programId;
         uniforms = new HashMap<>();
     }

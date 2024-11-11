@@ -1,8 +1,10 @@
-package renderEngine;
+package renderEngine.engine;
 
 import java.util.*;
 
 import org.lwjgl.opengl.GL30;
+import renderEngine.Utils;
+
 import static org.lwjgl.opengl.GL30.*;
 
 public class ShaderProgram {

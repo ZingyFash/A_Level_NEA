@@ -1,4 +1,4 @@
-package renderEngine;
+package renderEngine.entity;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;

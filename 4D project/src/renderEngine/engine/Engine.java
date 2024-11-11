@@ -1,4 +1,11 @@
-package renderEngine;
+package renderEngine.engine;
+
+import renderEngine.Main;
+import renderEngine.engine.Scene;
+import renderEngine.engine.Window;
+import renderEngine.renderer.Renderer;
+import renderEngine.renderer.Renderer2DSlice;
+import renderEngine.renderer.Renderer4D;
 
 /**
  * The class that defines the logic for rendering a scene and handling updates and inputs
@@ -8,7 +15,7 @@ public class Engine {
     public static final int TARGET_UPS = 30;
     private final Main main;
     private final Window window;
-    private Renderer2DSlice render;
+    private Renderer render;
     private boolean running;
     private Scene scene;
     private int targetFps;
@@ -23,8 +30,8 @@ public class Engine {
         targetFps = opts.fps;
         targetUps = opts.ups;
         this.main = main;
-        render = new Renderer2DSlice();
-        main.init(window, scene, render);
+        render = new Renderer4D();
+        main.init(window, scene);
         running = true;
     }
 

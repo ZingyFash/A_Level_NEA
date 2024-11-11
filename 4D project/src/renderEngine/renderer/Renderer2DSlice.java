@@ -1,6 +1,14 @@
-package renderEngine;
+package renderEngine.renderer;
 
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
+import renderEngine.*;
+import renderEngine.engine.Scene;
+import renderEngine.engine.ShaderProgram;
+import renderEngine.engine.UniformMap;
+import renderEngine.engine.Window;
+import renderEngine.entity.Entity;
+import renderEngine.entity.Mesh;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +18,7 @@ import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
-public class Renderer2DSlice {
+public class Renderer2DSlice implements Renderer {
     private UniformMap uniformsMap2D;
     private UniformMap uniformsMap3D;
     ShaderProgram shaderProgram2D;
@@ -39,18 +47,17 @@ public class Renderer2DSlice {
     }
 
     public void render(Window window, Scene scene) {
-        glClearColor(1,1,1,1);
+        glClearColor(.1f,.1f,.1f,1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glViewport(0,0,window.getWidth(), window.getHeight());
 
         for (Entity entity : scene.getEntities()) {
             // The 2D cross-section
             shaderProgram2D.bind();
-            uniformsMap2D.setUniform1f("aspectRatio", ((float) window.getWidth()) /window.getHeight());
+            uniformsMap2D.setUniform1f("aspectRatio", ((float) window.getWidth()) / window.getHeight());
             Mesh mesh = scene.getModelMap().get(entity.getModelId()).getMesh();
             mesh.transformVertices(entity.getModelMatrix());
             Mesh mesh2D = mesh.slice2D(Main.planeZ);
-            mesh.transformVertices(entity.getModelMatrix().invert());
             glBindVertexArray(mesh2D.getVaoId());
             glDrawElements(GL_TRIANGLES, mesh2D.getNumVertices(), GL_UNSIGNED_INT, 0);
             shaderProgram2D.unbind();
@@ -59,18 +66,20 @@ public class Renderer2DSlice {
             shaderProgram3D.bind();
             uniformsMap3D.setUniform4x4f("projectionMatrix", scene.getProjection().getProjectionMatrix());
             uniformsMap3D.setUniform4x4f("modelMatrix", entity.getModelMatrix());
-            glBindVertexArray(scene.getModelMap().get(entity.getModelId()).getMesh().getVaoId());
-            glDrawElements(GL_TRIANGLES, scene.getModelMap().get(entity.getModelId()).getMesh().getNumVertices(), GL_UNSIGNED_INT, 0);
+            uniformsMap3D.setUniform3f("disp", new Vector3f(2,0,-5));
+            glBindVertexArray(mesh.getVaoId());
+            glDrawElements(GL_TRIANGLES, mesh.getNumVertices(), GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
             shaderProgram3D.unbind();
         }
     }
 
-    private void createUniforms() {
+    public void createUniforms() {
         uniformsMap2D = new UniformMap(shaderProgram2D.getProgramId());
         uniformsMap2D.createUniform("aspectRatio");
         uniformsMap3D = new UniformMap(shaderProgram3D.getProgramId());
         uniformsMap3D.createUniform("projectionMatrix");
         uniformsMap3D.createUniform("modelMatrix");
+        uniformsMap3D.createUniform("disp");
     }
 }

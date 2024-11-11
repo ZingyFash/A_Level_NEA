@@ -1,4 +1,4 @@
-package renderEngine;
+package renderEngine.entity;
 
 public class Model {
 

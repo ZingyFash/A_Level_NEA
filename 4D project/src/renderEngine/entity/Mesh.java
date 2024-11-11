@@ -1,4 +1,4 @@
-package renderEngine;
+package renderEngine.entity;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -17,6 +17,7 @@ public class Mesh {
 
     private int numVertices;
     private float[] positions;
+    private float[] transformPositions;
     private float[] colours;
     private int[] indices;
     private boolean[][] adjacencyMatrix;
@@ -25,6 +26,7 @@ public class Mesh {
 
     public Mesh(float[] positions, float[] colours, int[] indices, boolean[][] adjacencyMatrix) {
         this.positions = positions;
+        this.transformPositions = new float[positions.length];
         this.colours = colours;
         this.indices = indices;
         this.adjacencyMatrix = adjacencyMatrix;
@@ -69,9 +71,9 @@ public class Mesh {
         for (int i = 0; i < positions.length/3; i++) {
             Vector4f vert = new Vector4f(positions[i*3], positions[i*3+1], positions[i*3+2], 1);
             Vector4f vertImage = vert.mul(modelMatrix);
-            positions[i*3] = vertImage.get(0);
-            positions[i*3+1] = vertImage.get(1);
-            positions[i*3+2] = vertImage.get(2);
+            transformPositions[i*3] = vertImage.get(0);
+            transformPositions[i*3+1] = vertImage.get(1);
+            transformPositions[i*3+2] = vertImage.get(2);
         }
     }
 
@@ -97,21 +99,15 @@ public class Mesh {
             System.arraycopy(adjacencyMatrix[i], 0, am[i], 0, adjacencyMatrix.length);
         }
         for (int i = 0; i < indices.length; i++) {
-            if (!adjacencyMatrix[indices[i]][indices[(i%3==2)?i-2:i+1]]) {
+            int index = (i % 3 == 2) ? i - 2 : i + 1;
+            if (!adjacencyMatrix[indices[i]][indices[index]]) {
                 continue;
             }
-            adjacencyMatrix[indices[i]][indices[(i%3==2)?i-2:i+1]] = false;
-            Vector3f vertexA = new Vector3f(positions[indices[i]*3], positions[indices[i]*3+1], positions[indices[i]*3+2]);
+            adjacencyMatrix[indices[i]][indices[index]] = false;
+            Vector3f vertexA = new Vector3f(transformPositions[indices[i]*3], transformPositions[indices[i]*3+1], transformPositions[indices[i]*3+2]);
             Vector3f colourA = new Vector3f(colours[indices[i]*3], colours[indices[i]*3+1], colours[indices[i]*3+2]);
-            Vector3f vertexB;
-            Vector3f colourB;
-            if (i%3 != 2) {
-                vertexB = new Vector3f(positions[indices[i+1]*3], positions[indices[i+1]*3+1], positions[indices[i+1]*3+2]);
-                colourB = new Vector3f(colours[indices[i+1]*3], colours[indices[i+1]*3+1], colours[indices[i+1]*3+2]);
-            } else {
-                vertexB = new Vector3f(positions[indices[i-2]*3], positions[indices[i-2]*3+1], positions[indices[i-2]*3+2]);
-                colourB = new Vector3f(colours[indices[i-2]*3], colours[indices[i-2]*3+1], colours[indices[i-2]*3+2]);
-            }
+            Vector3f vertexB = new Vector3f(transformPositions[indices[index]*3], transformPositions[indices[index]*3+1], transformPositions[indices[index]*3+2]);
+            Vector3f colourB = new Vector3f(colours[indices[index]*3], colours[indices[index]*3+1], colours[indices[index]*3+2]);
             if (Math.min(Math.min(vertexA.z(), vertexB.z()), planeZ) == planeZ ||
             Math.max(Math.max(vertexA.z(), vertexB.z()), planeZ) == planeZ) {
                 continue;

@@ -7,9 +7,10 @@ out vec3 outColour;
 
 uniform mat4 projectionMatrix;
 uniform mat4 modelMatrix;
+uniform vec3 disp;
 
 void main()
 {
-    gl_Position = projectionMatrix * (modelMatrix * vec4(inPosition, 1.0)+vec4(2,0,-5,0));
+    gl_Position = projectionMatrix * (modelMatrix * vec4(inPosition, 1.0)+vec4(disp,0));
     outColour = inColour;
 }

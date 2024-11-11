@@ -1,14 +1,21 @@
-package renderEngine;
+package renderEngine.renderer;
 
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
+import renderEngine.engine.Scene;
+import renderEngine.engine.ShaderProgram;
+import renderEngine.engine.UniformMap;
+import renderEngine.engine.Window;
+import renderEngine.entity.Entity;
+import renderEngine.entity.Mesh;
+import renderEngine.entity.Model;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL43.GL_COMPUTE_SHADER;
 
-public class RendererPure3D {
+public class RendererPure3D implements Renderer {
     private ShaderProgram shaderProgram;
     private UniformMap uniformsMap;
     public RendererPure3D() {
@@ -35,6 +42,7 @@ public class RendererPure3D {
         shaderProgram.bind();
 
         uniformsMap.setUniform4x4f("projectionMatrix", scene.getProjection().getProjectionMatrix());
+        uniformsMap.setUniform3f("disp", new Vector3f(0,0,0));
 
         for (Entity e : scene.getEntities()) {
             uniformsMap.setUniform4x4f("modelMatrix", e.getModelMatrix());
@@ -49,10 +57,11 @@ public class RendererPure3D {
         shaderProgram.unbind();
     }
 
-    private void createUniforms() {
+    public void createUniforms() {
         uniformsMap = new UniformMap(shaderProgram.getProgramId());
         uniformsMap.createUniform("projectionMatrix");
         uniformsMap.createUniform("modelMatrix");
+        uniformsMap.createUniform("disp");
     }
 
 }
