@@ -42,7 +42,7 @@ public class RendererPure3D implements Renderer {
         shaderProgram.bind();
 
         uniformsMap.setUniform4x4f("projectionMatrix", scene.getProjection().getProjectionMatrix());
-        uniformsMap.setUniform3f("disp", new Vector3f(0,0,0));
+        uniformsMap.setUniform3f("disp", new Vector3f(0,0,-5));
 
         for (Entity e : scene.getEntities()) {
             uniformsMap.setUniform4x4f("modelMatrix", e.getModelMatrix());

@@ -21,6 +21,7 @@ public class Engine {
     private int targetFps;
     private int targetUps;
 
+
     public Engine(String windowTitle, Window.WindowOptions opts, Main main) {
         window = new Window(windowTitle, opts, () -> {
             resize();

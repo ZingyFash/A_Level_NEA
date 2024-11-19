@@ -3,11 +3,15 @@ package renderEngine.renderer;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL;
+import renderEngine.*;
 import renderEngine.engine.Scene;
 import renderEngine.engine.ShaderProgram;
 import renderEngine.engine.UniformMap;
 import renderEngine.engine.Window;
-import renderEngine.entity.*;
+import renderEngine.entity.Entity4D;
+import renderEngine.entity.Mesh;
+import renderEngine.entity.Mesh4D;
+import renderEngine.entity.Model4D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +54,8 @@ public class Renderer4D implements Renderer {
             uniformsMap.setUniform4x4f("modelMatrix", new Matrix4f());
             Model4D model = scene.getModelMap4D().get(e.getModelId());
             Mesh4D mesh = model.getMesh();
-            mesh.transformVertices(e.getPosition());
-            Mesh mesh3 = mesh.slice3D(0);
+            mesh.transformVertices(e.getPosition(), e.getRotation());
+            Mesh mesh3 = mesh.slice3D(Main.planeW);
             glBindVertexArray(mesh3.getVaoId());
             glDrawElements(GL_TRIANGLES, mesh3.getNumVertices(), GL_UNSIGNED_INT, 0);
         }
