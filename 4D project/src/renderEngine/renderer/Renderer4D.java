@@ -43,6 +43,7 @@ public class Renderer4D implements Renderer {
 
     public void render(Window window, Scene scene) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor((float)Math.abs(Math.cos(Main.rotation)), (float)Math.abs(Math.sin(Main.rotation)), (float)(Math.abs(Math.cos(Main.rotation)) + Math.abs(Math.sin(Main.rotation)))/2, 1.0f);
         glViewport(0,0, window.getWidth(), window.getHeight());
 
         shaderProgram.bind();

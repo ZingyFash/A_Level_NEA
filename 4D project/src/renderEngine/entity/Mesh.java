@@ -15,14 +15,14 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
 
-    private int numVertices;
-    private float[] positions;
-    private float[] transformPositions;
-    private float[] colours;
-    private int[] indices;
+    private final int numVertices;
+    private final float[] positions;
+    private final float[] transformPositions;
+    private final float[] colours;
+    private final int[] indices;
     private boolean[][] adjacencyMatrix;
-    private int vaoId;
-    private List<Integer> vboIdList;
+    private final int vaoId;
+    private final List<Integer> vboIdList;
 
     public Mesh(float[] positions, float[] colours, int[] indices, boolean[][] adjacencyMatrix) {
         this.positions = positions;

@@ -21,8 +21,9 @@ public class Main {
     private Entity4D entity4D;
     private Entity plane;
     private final Vector4f velocity = new Vector4f();
-    private float rotation;
+    public static float rotation;
     private boolean paused = false;
+    private static Engine engine;
 
     /**
      * The entry point of the application, sets up the window and the engine.
@@ -34,7 +35,7 @@ public class Main {
         Window.WindowOptions windowOptions = new Window.WindowOptions();
         windowOptions.fps = 60;
         // initialise and run the graphics engine
-        Engine engine = new Engine("4D", windowOptions, main);
+        engine = new Engine("4D", windowOptions, main);
         engine.start();
     }
 
@@ -93,7 +94,8 @@ public class Main {
         }
         entity.setRotation(1,0,0, rotation);
         entity.updateModelMatrix();
-        //entity4D.setRotation(new float[]{rotation, rotation, rotation, rotation, rotation, rotation});
+        entity4D.setRotation(new float[]{rotation, rotation, rotation, rotation, rotation, rotation});
+        planeW = (float) Math.sin(rotation*2)/2;
     }
 
     /**

@@ -31,7 +31,7 @@ public class Engine {
         targetFps = opts.fps;
         targetUps = opts.ups;
         this.main = main;
-        render = new Renderer4D();
+        render = new Renderer2DSlice();
         main.init(window, scene);
         running = true;
     }

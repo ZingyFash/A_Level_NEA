@@ -21,8 +21,8 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 public class Renderer2DSlice implements Renderer {
     private UniformMap uniformsMap2D;
     private UniformMap uniformsMap3D;
-    ShaderProgram shaderProgram2D;
-    ShaderProgram shaderProgram3D;
+    private ShaderProgram shaderProgram2D;
+    private ShaderProgram shaderProgram3D;
 
     public Renderer2DSlice() {
         GL.createCapabilities();
@@ -37,8 +37,7 @@ public class Renderer2DSlice implements Renderer {
 
         shaderProgram2D = new ShaderProgram(shaderModuleDataList);
         shaderProgram3D = new ShaderProgram(shaderModuleDataList1);
-        uniformsMap2D = new UniformMap(shaderProgram2D.getProgramId());
-        uniformsMap3D = new UniformMap(shaderProgram3D.getProgramId());
+
         createUniforms();
     }
 

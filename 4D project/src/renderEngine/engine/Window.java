@@ -39,7 +39,7 @@ public class Window {
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         }
 
-        if (opts.width > 0 && opts.height > 3) {
+        if (opts.width > 0 && opts.height > 0) {
             this.width = opts.width;
             this.height = opts.height;
         } else {
